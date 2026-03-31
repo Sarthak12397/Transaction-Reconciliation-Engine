@@ -1,0 +1,6 @@
+@TransactionReconcillationEngine_HostAddress = http://localhost:5278
+
+GET {{TransactionReconcillationEngine_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

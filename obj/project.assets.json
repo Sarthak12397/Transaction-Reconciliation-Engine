@@ -89,11 +89,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\Final_Projects\\Integration_backend\\IntegrationProcessing.API\\IntegrationBackend.csproj",
-      "projectName": "IntegrationBackend",
-      "projectPath": "D:\\Final_Projects\\Integration_backend\\IntegrationProcessing.API\\IntegrationBackend.csproj",
+      "projectUniqueName": "D:\\Final_Projects\\Integration_backend\\TransactionReconcillationEngine\\TransactionReconcillationEngine\\TransactionReconcillationEngine.csproj",
+      "projectName": "TransactionReconcillationEngine",
+      "projectPath": "D:\\Final_Projects\\Integration_backend\\TransactionReconcillationEngine\\TransactionReconcillationEngine\\TransactionReconcillationEngine.csproj",
       "packagesPath": "C:\\Users\\Sarthak Shrestha\\.nuget\\packages\\",
-      "outputPath": "D:\\Final_Projects\\Integration_backend\\IntegrationProcessing.API\\obj\\",
+      "outputPath": "D:\\Final_Projects\\Integration_backend\\TransactionReconcillationEngine\\TransactionReconcillationEngine\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
