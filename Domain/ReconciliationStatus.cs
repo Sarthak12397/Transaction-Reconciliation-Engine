@@ -1,4 +1,4 @@
-public enum StateMachine
+public enum ExternalPaymentStatus
 {
     Pending,
     Processing,
