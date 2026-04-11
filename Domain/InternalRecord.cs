@@ -30,6 +30,23 @@ public class InternalRecord
     }
 
 
+
     
+
+    public InternalRecord(
+        Guid SenderId,
+        Guid recieverId,
+        Guid transactionId,
+        decimal amount,
+        string currency)
+    {
+        id = Guid.NewGuid(); 
+        senderId = SenderId;
+        RecieverId = recieverId;
+        TransactionId = transactionId;
+        Amount = amount;
+        Currency = currency;
+        CreatedAt = DateTime.UtcNow;
+    }
 
 }
