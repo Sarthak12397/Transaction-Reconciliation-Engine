@@ -29,4 +29,13 @@ public class ReconcilationRecord
     }
     public DateTime? LastAttemptedAt{get; private set;}
 
+    public String? FailureReason
+    {
+        get;private set;
+    }
+    public DateTime CreatedAt
+    {
+        get; private set;
+    }
+
 }
