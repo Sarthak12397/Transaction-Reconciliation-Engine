@@ -63,7 +63,6 @@ public ReconciliationRecord(
 
 
 
-
     public void MarkAsProcessing()
     {
         if(Status != ReconciliationStatus.Pending && Status != ReconciliationStatus.RetryScheduled)
@@ -73,6 +72,8 @@ public ReconciliationRecord(
 
         }
          LastAttemptedAt = DateTime.UtcNow;
+             FailureReason = null;
+    NextRetryAt = null;
 
         Status = ReconciliationStatus.Processing;
         UpdatedAt = DateTime.UtcNow;
@@ -84,18 +85,104 @@ public ReconciliationRecord(
     {
         if(Status != ReconciliationStatus.Processing)
         {
-               throw new InvalidOperationException($"Cannot mark as matched from state {Status}");
+
+        throw new InvalidOperationException($"Cannot mark as matched from state {Status}");
+
+        }
+
+        Status = ReconciliationStatus.Matched;
+            LastAttemptedAt = DateTime.UtcNow;
+         NextRetryAt = null;
+         FailureReason = null;
+
+        ResolvedAt = DateTime.UtcNow;
+         UpdatedAt = DateTime.UtcNow;
+    }
+    
+    public void MarkAsMismatch(string reason)
+    {
+        if(Status != ReconciliationStatus.Processing)
+        {
+                    throw new InvalidOperationException($"Cannot mark as mismatch from state {Status}");
+
+        }
+
+        FailureReason = reason;
+        Status = ReconciliationStatus.Mismatch;
+         LastAttemptedAt = DateTime.UtcNow;
+           UpdatedAt = DateTime.UtcNow;
+             NextRetryAt = null;           
+       ResolvedAt = DateTime.UtcNow;
     }
 
-    Status = ReconciliationStatus.Matched;
 
-    LastAttemptedAt = DateTime.UtcNow;
-    RetryCount = 0;
-    NextRetryAt = null;
-    FailureReason = null;
+   public void MarkAsRetryScheduled(DateTime nextRetryAt)
+    {
+        if (Status != ReconciliationStatus.Processing)
+        {
+            throw new InvalidOperationException(
+                $"Cannot schedule retry from state {Status}");
+        }
+               if (nextRetryAt <= DateTime.UtcNow)
+        {
+            throw new ArgumentException(
+                "Next retry must be in the future");
+        }
 
-    ResolvedAt = DateTime.UtcNow;
-    UpdatedAt = DateTime.UtcNow;
+        var newRetryCount = RetryCount + 1;
+
+        if (newRetryCount > MaxRetryCount)
+        {
+            throw new InvalidOperationException(
+                "Max retries reached. Use MarkAsDeadLettered.");
+        }
+
+
+        RetryCount++;
+
+        Status = ReconciliationStatus.RetryScheduled;
+        LastAttemptedAt = DateTime.UtcNow;
+        UpdatedAt = DateTime.UtcNow;
+        NextRetryAt = nextRetryAt;
+    }
+
+    public void MarkAsDeadLettered(string reason)
+    {
+            if (Status != ReconciliationStatus.Processing)
+    {
+        throw new InvalidOperationException($"Cannot dead-letter from state {Status}");
+
+    }
+      if (RetryCount < MaxRetryCount)
+    {
+        throw new InvalidOperationException("Cannot dead-letter before max retries");
+    }
+        FailureReason =reason;
+        Status = ReconciliationStatus.DeadLettered;
+            LastAttemptedAt = DateTime.UtcNow;
+        NextRetryAt = null;
+        ResolvedAt = DateTime.UtcNow;
+        UpdatedAt = DateTime.UtcNow;
+    }
+
+
+    public void MarkAsFailed(string reason)
+    {
+        if(Status != ReconciliationStatus.Processing)
+        {
+                    throw new InvalidOperationException($"Cannot Fail from {Status}");
+
+        }
+        Status = ReconciliationStatus.Failed;
+        FailureReason =reason;
+        NextRetryAt = null;
+        LastAttemptedAt = DateTime.UtcNow;
+        ResolvedAt = DateTime.UtcNow;
+        UpdatedAt = DateTime.UtcNow;
+        
+    }
+
+
    
 
 

@@ -1,15 +1,15 @@
 public class InternalRecord
 {
-    public Guid id
+    public Guid Id
     {
         get; private set;
     
     }
-    public Guid senderId
+    public Guid SenderId
     {
         get; private set;
     }
-    public Guid RecieverId
+    public Guid ReceiverId 
     {
         get;private set;
     
@@ -24,6 +24,11 @@ public class InternalRecord
         get;private set;
     }
 
+    public InternalPaymentStatus Status
+    {
+        get; private set;
+    }
+
  public DateTime CreatedAt
     {
         get;private set;
@@ -33,20 +38,26 @@ public class InternalRecord
 
     
 
-    public InternalRecord(
-        Guid SenderId,
-        Guid recieverId,
-        Guid transactionId,
-        decimal amount,
-        string currency)
-    {
-        id = Guid.NewGuid(); 
-        senderId = SenderId;
-        RecieverId = recieverId;
-        TransactionId = transactionId;
-        Amount = amount;
-        Currency = currency;
-        CreatedAt = DateTime.UtcNow;
-    }
+
+
+    
+
+public InternalRecord(
+    Guid senderId,
+    Guid receiverId,
+    Guid transactionId,
+    decimal amount, InternalPaymentStatus status,
+    string currency)
+{
+    Id = Guid.NewGuid();
+    SenderId = senderId;
+    ReceiverId  = receiverId; 
+    TransactionId = transactionId;
+    Amount = amount;
+    Currency = currency;
+    Status =  InternalPaymentStatus.Pending;;
+    CreatedAt = DateTime.UtcNow;
+}
 
 }
+
