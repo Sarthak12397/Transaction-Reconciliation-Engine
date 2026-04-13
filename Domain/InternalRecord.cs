@@ -34,6 +34,7 @@ public class InternalRecord
         get;private set;
     }
 
+public DateTime UpdatedAt { get; private set; }
 
 
     
@@ -46,7 +47,7 @@ public InternalRecord(
     Guid senderId,
     Guid receiverId,
     Guid transactionId,
-    decimal amount, InternalPaymentStatus status,
+    decimal amount,
     string currency)
 {
     Id = Guid.NewGuid();
@@ -57,6 +58,7 @@ public InternalRecord(
     Currency = currency;
     Status =  InternalPaymentStatus.Pending;;
     CreatedAt = DateTime.UtcNow;
+    UpdatedAt = DateTime.UtcNow;
 }
 
 }

@@ -63,6 +63,7 @@ public ReconciliationRecord(
 
 
 
+
     public void MarkAsProcessing()
     {
         if(Status != ReconciliationStatus.Pending && Status != ReconciliationStatus.RetryScheduled)
@@ -72,8 +73,6 @@ public ReconciliationRecord(
 
         }
          LastAttemptedAt = DateTime.UtcNow;
-             FailureReason = null;
-    NextRetryAt = null;
 
         Status = ReconciliationStatus.Processing;
         UpdatedAt = DateTime.UtcNow;
@@ -110,9 +109,8 @@ public ReconciliationRecord(
         FailureReason = reason;
         Status = ReconciliationStatus.Mismatch;
          LastAttemptedAt = DateTime.UtcNow;
+         ResolvedAt = DateTime.UtcNow;
            UpdatedAt = DateTime.UtcNow;
-             NextRetryAt = null;           
-       ResolvedAt = DateTime.UtcNow;
     }
 
 
@@ -123,20 +121,9 @@ public ReconciliationRecord(
             throw new InvalidOperationException(
                 $"Cannot schedule retry from state {Status}");
         }
-               if (nextRetryAt <= DateTime.UtcNow)
-        {
-            throw new ArgumentException(
-                "Next retry must be in the future");
-        }
 
-        var newRetryCount = RetryCount + 1;
-
-        if (newRetryCount > MaxRetryCount)
-        {
-            throw new InvalidOperationException(
-                "Max retries reached. Use MarkAsDeadLettered.");
-        }
-
+ if (RetryCount >= MaxRetryCount)
+        throw new InvalidOperationException("Max retries reached. Use MarkAsDeadLettered.");
 
         RetryCount++;
 
@@ -159,8 +146,7 @@ public ReconciliationRecord(
     }
         FailureReason =reason;
         Status = ReconciliationStatus.DeadLettered;
-            LastAttemptedAt = DateTime.UtcNow;
-        NextRetryAt = null;
+         LastAttemptedAt = DateTime.UtcNow;
         ResolvedAt = DateTime.UtcNow;
         UpdatedAt = DateTime.UtcNow;
     }
@@ -175,11 +161,10 @@ public ReconciliationRecord(
         }
         Status = ReconciliationStatus.Failed;
         FailureReason =reason;
-        NextRetryAt = null;
         LastAttemptedAt = DateTime.UtcNow;
+        
         ResolvedAt = DateTime.UtcNow;
         UpdatedAt = DateTime.UtcNow;
-        
     }
 
 
@@ -188,4 +173,3 @@ public ReconciliationRecord(
 
 
 }
-

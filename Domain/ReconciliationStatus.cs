@@ -1,4 +1,4 @@
-public enum ExternalPaymentStatus
+public enum ReconciliationStatus
 {
     Pending,
     Processing,

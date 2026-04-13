@@ -8,9 +8,13 @@ public class ExternalRecord
 
     public Guid TransactionId { get; private set; }
 
-    public decimal Amount { get; private set; }
+    public decimal Amount
+     { 
+        get;
+         private set; }
 
-    public string Currency { get; private set; }
+    public string Currency {
+         get; private set; }
 
     public ExternalPaymentStatus Status { get; private set; }
 
@@ -22,6 +26,7 @@ public class ExternalRecord
         Guid transactionId,
         decimal amount,
         string currency,
+        ExternalPaymentStatus status,
         DateTime processedAt)
     {
         Id = Guid.NewGuid();
@@ -30,7 +35,7 @@ public class ExternalRecord
         TransactionId = transactionId;
         Amount = amount;
         Currency = currency;
-        Status = ExternalPaymentStatus.Pending;
+        Status = status;
         ProcessedAt = processedAt;
     }
 }
