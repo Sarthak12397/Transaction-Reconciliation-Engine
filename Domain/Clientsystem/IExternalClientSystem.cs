@@ -1,5 +1,5 @@
 public interface IExternalSystemClient
 
 {
-    Task<ExternalRecord?> GetExternalRecordAsync(  Guid transactionId);
+    Task<ExternalRecord?> GetExternalRecordAsync(Guid transactionId);
 }

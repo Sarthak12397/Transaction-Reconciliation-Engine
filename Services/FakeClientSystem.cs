@@ -4,12 +4,13 @@ public class FakeExternalClientSystem: IExternalSystemClient
 {
     public async Task<ExternalRecord?> GetExternalRecordAsync(Guid transactionId)
     {
-        var random = new Random().Next(1,5);
+        await Task.Delay(100); 
+        var random = Random.Shared.Next(1,5);
 
         if(random == 1)
         {
             
-            return RecordCompare.Unavailable;
+            return null;
         }
 
         if(random == 2)
@@ -47,7 +48,8 @@ public class FakeExternalClientSystem: IExternalSystemClient
 
             );
         }
-                       return new ExternalRecord(
+        else{
+            return new ExternalRecord(
               senderId:Guid.NewGuid(),
               receiverId: Guid.NewGuid(),
               transactionId:transactionId,
@@ -59,7 +61,7 @@ public class FakeExternalClientSystem: IExternalSystemClient
 
             );
 
-        
+        }
 
 
 
