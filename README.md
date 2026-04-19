@@ -6,6 +6,18 @@ retries, failure classification, and dead-letter handling.
 
 > Built with .NET 10 · PostgreSQL · Hangfire · Docker · Serilog
 
+## System Summary
+
+This system continuously reconciles internal financial 
+records with an external payment system (eSewa simulation). 
+It ensures eventual consistency through:
+
+- Continuous polling (Hangfire jobs)
+- Strict state machine transitions
+- Idempotent external interactions
+- Retry + dead-letter failure handling
+- Full audit trail of every state change
+
 ## Problem
 
 Financial systems maintain records across multiple sources.
