@@ -1,70 +1,50 @@
-
-
-public class FakeExternalClientSystem: IExternalSystemClient
+public class FakeExternalClientSystem : IExternalSystemClient
 {
+    private static readonly Dictionary<Guid, ExternalRecord?> _store = new();
+
     public async Task<ExternalRecord?> GetExternalRecordAsync(Guid transactionId)
     {
-        await Task.Delay(100); 
-        var random = Random.Shared.Next(1,5);
+        await Task.Delay(100);
 
-        if(random == 1)
+        if (_store.TryGetValue(transactionId, out var cached))
+            return cached;
+
+        var random = Random.Shared.Next(1, 5);
+
+        if (random == 1)
         {
-            
+            _store[transactionId] = null;
             return null;
         }
 
-        if(random == 2)
+        if (random == 2)
+            throw new Exception("eSewa timeout");
+
+        if (random == 3)
         {
-              throw new Exception("Timeout");
+            var result = new ExternalRecord(
+                senderId: Guid.NewGuid(),
+                receiverId: Guid.NewGuid(),
+                transactionId: transactionId,
+                amount: 20m,
+                currency: "NPR",
+                status: ExternalPaymentStatus.Failed,
+                processedAt: DateTime.UtcNow);
 
-      
-        }
-        if(random == 3)
-        {
-                       return new ExternalRecord(
-              senderId:Guid.NewGuid(),
-              receiverId: Guid.NewGuid(),
-              transactionId:transactionId,
-              amount: 20m,
-              currency: "NPR",
-              status: ExternalPaymentStatus.Failed,
-              processedAt: DateTime.UtcNow
-
-
-            );
-
-        }
-        if(random == 4)
-        {
-                       return new ExternalRecord(
-              senderId:Guid.NewGuid(),
-              receiverId: Guid.NewGuid(),
-              transactionId:transactionId,
-              amount: 30m,
-              currency: "NPR",
-              status: ExternalPaymentStatus.Success,
-              processedAt: DateTime.UtcNow
-
-
-            );
-        }
-        else{
-            return new ExternalRecord(
-              senderId:Guid.NewGuid(),
-              receiverId: Guid.NewGuid(),
-              transactionId:transactionId,
-              amount: 60m,
-              currency: "NPR",
-              status: ExternalPaymentStatus.NotFound,
-              processedAt: DateTime.UtcNow
-
-
-            );
-
+            _store[transactionId] = result;
+            return result;
         }
 
+        var matchResult = new ExternalRecord(
+            senderId: Guid.NewGuid(),
+            receiverId: Guid.NewGuid(),
+            transactionId: transactionId,
+            amount: 30m,
+            currency: "NPR",
+            status: ExternalPaymentStatus.Success,
+            processedAt: DateTime.UtcNow);
 
-
-
+        _store[transactionId] = matchResult;
+        return matchResult;
     }
 }

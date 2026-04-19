@@ -35,6 +35,8 @@ return Ok();
         
 
      }
+
+     //Demo
      [HttpPost("seed")]
 public async Task<IActionResult> Seed()
 {
@@ -76,6 +78,13 @@ public async Task<IActionResult> Seed()
         Message = "Seed created. Hangfire will process within 1 minute."
     });
 }
-
+[HttpGet("dead-lettered")]
+public async Task<IActionResult> GetDeadLettered()
+{
+    var records = await _db.ReconciliationRecords
+        .Where(r => r.Status == ReconciliationStatus.DeadLettered)
+        .ToListAsync();
+    return Ok(records);
+}
 
 }
