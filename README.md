@@ -18,3 +18,15 @@ system (eSewa, bank, payment gateway) — that gap is real money:
 - Nobody notices until the audit fails.
 
 Without active reconciliation, these gaps silently accumulate.
+
+## Solution
+
+- **State machine** — every reconciliation attempt moves through
+  strict, controlled states. No ambiguity. No illegal jumps.
+- **Idempotent external client** — same TransactionId always
+  returns the same external state. Requeue never triggers
+  duplicate external actions.
+- **Failure classification** — transient failures retried safely.
+  Permanent failures dead-lettered immediately.
+- **Audit trail** — every state change written to DB with
+  CorrelationId for full traceability.
