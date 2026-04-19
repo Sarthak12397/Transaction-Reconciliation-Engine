@@ -169,7 +169,17 @@ public ReconciliationRecord(
 
 
    
+public void MarkAsPending()
+{
+    if (Status != ReconciliationStatus.DeadLettered)
+        throw new InvalidOperationException($"Cannot requeue from {Status}");
 
+    Status = ReconciliationStatus.Pending;
+    RetryCount = 0;
+    FailureReason = null;
+    NextRetryAt = null;
+    UpdatedAt = DateTime.UtcNow;
+}
 
 
 }
