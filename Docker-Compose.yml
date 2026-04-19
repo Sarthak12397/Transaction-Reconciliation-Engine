@@ -6,7 +6,7 @@ services:
     ports:
       - "8080:8080"
     environment:
-      - ConnectionStrings__DefaultConnection=Host=db;Port=5432;Database=reconciliationdb;Username=postgres;Password=postgres
+      - ConnectionStrings__DefaultConnection=Host=db;Port=5432;Database=reconciliationdb;Username=postgres;Password=1234
     depends_on:
       - db
 
