@@ -30,7 +30,7 @@ Without active reconciliation, these gaps silently accumulate.
   Permanent failures dead-lettered immediately.
 - **Audit trail** — every state change written to DB with
   CorrelationId for full traceability.
--- **Read-based reconciliation** — external system is queried 
+- **Read-based reconciliation** — external system is queried 
   for state, not re-triggered. Requeue never causes duplicate 
   external actions.
   
