@@ -1,4 +1,5 @@
 using Hangfire;
+using Hangfire.Dashboard;
 using Hangfire.PostgreSql;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
@@ -34,19 +35,21 @@ builder.Services.AddControllers();
 
 var app = builder.Build();
 
-// 1. Migrations FIRST
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     db.Database.Migrate();
 }
 
-// 2. Middleware
 app.UseMiddleware<CorrelationIdMiddleware>();
-app.UseHangfireDashboard();
+
+app.UseHangfireDashboard("/hangfire", new DashboardOptions
+{
+    Authorization = new[] { new AllowAllDashboardAuthorizationFilter() }
+});
+
 app.UseHttpsRedirection();
 
-// 3. Recurring jobs
 using (var scope = app.Services.CreateScope())
 {
     RecurringJob.AddOrUpdate<RetryJobs>(
@@ -65,6 +68,5 @@ using (var scope = app.Services.CreateScope())
         "*/5 * * * *");
 }
 
-// 4. Controllers
 app.MapControllers();
 app.Run();
