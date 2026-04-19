@@ -4,7 +4,8 @@ using Microsoft.EntityFrameworkCore;
 using Serilog;
 
 Log.Logger = new LoggerConfiguration()
-    .WriteTo.Console()
+    .WriteTo.Console(outputTemplate: 
+        "[{Timestamp:HH:mm:ss} {Level:u3}] {CorrelationId} {Message:lj}{NewLine}{Exception}")
     .Enrich.FromLogContext()
     .CreateLogger();
 
@@ -26,7 +27,6 @@ builder.Services.AddScoped<ReconciliationService>();
 builder.Services.AddScoped<RecordComparator>();
 builder.Services.AddScoped<IExternalSystemClient, FakeExternalClientSystem>();
 
-// Jobs
 builder.Services.AddScoped<RetryJobs>();
 builder.Services.AddScoped<PeriodScanJobs>();
 builder.Services.AddScoped<StuckRecoveryJobs>();
@@ -34,6 +34,7 @@ builder.Services.AddScoped<StuckRecoveryJobs>();
 builder.Services.AddControllers();
 
 var app = builder.Build();
+app.UseMiddleware<CorrelationIdMiddleware>();
 
 app.UseHangfireDashboard();
 
@@ -53,7 +54,11 @@ RecurringJob.AddOrUpdate<StuckRecoveryJobs>(
     job => job.ExecuteAsync(),
     "*/5 * * * *");
 }
-
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    db.Database.Migrate();
+}
 app.UseHttpsRedirection();
 app.UseMiddleware<CorrelationIdMiddleware>();
 
