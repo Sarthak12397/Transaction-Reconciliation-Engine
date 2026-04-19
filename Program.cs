@@ -35,10 +35,8 @@ builder.Services.AddControllers();
 
 var app = builder.Build();
 
-// Hangfire Dashboard
 app.UseHangfireDashboard();
 
-// Register recurring jobs
 using (var scope = app.Services.CreateScope())
 {
     RecurringJob.AddOrUpdate<RetryJobs>(
@@ -57,5 +55,7 @@ RecurringJob.AddOrUpdate<StuckRecoveryJobs>(
 }
 
 app.UseHttpsRedirection();
+app.UseMiddleware<CorrelationIdMiddleware>();
+
 app.MapControllers();
 app.Run();
