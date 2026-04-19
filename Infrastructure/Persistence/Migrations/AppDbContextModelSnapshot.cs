@@ -93,6 +93,38 @@ namespace TransactionReconcillationEngine.Migrations
                     b.ToTable("InternalRecords");
                 });
 
+            modelBuilder.Entity("ReconciliationAuditLog", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("CorrelationId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("FromState")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Reason")
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("ReconciliationRecordId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("RetryCount")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("ToState")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ReconciliationAuditLogs");
+                });
+
             modelBuilder.Entity("ReconciliationRecord", b =>
                 {
                     b.Property<Guid>("Id")
