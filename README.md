@@ -30,3 +30,21 @@ Without active reconciliation, these gaps silently accumulate.
   Permanent failures dead-lettered immediately.
 - **Audit trail** — every state change written to DB with
   CorrelationId for full traceability.
+## Reconciliation Lifecycle
+<img width="1705" height="870" alt="mermaid-diagram (3)" src="https://github.com/user-attachments/assets/42b861d8-3720-4a50-9510-55ca0ce608cc" />
+
+## Example Flow
+
+### 1. Seed test data
+```json
+POST /api/reconciliation/seed
+```
+```json
+{
+  "reconciliationId": "f42ceeaf-...",
+  "transactionId": "133748b4-...",
+  "internalAmount": 30,
+  "externalAmount": 20,
+  "message": "Seed created. Hangfire will process within 1 minute."
+}
+```
