@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Serilog;
 
 Log.Logger = new LoggerConfiguration()
-    .WriteTo.Console(outputTemplate: 
+    .WriteTo.Console(outputTemplate:
         "[{Timestamp:HH:mm:ss} {Level:u3}] {CorrelationId} {Message:lj}{NewLine}{Exception}")
     .Enrich.FromLogContext()
     .CreateLogger();
@@ -22,7 +22,6 @@ builder.Services.AddHangfire(config =>
             builder.Configuration.GetConnectionString("DefaultConnection"))));
 builder.Services.AddHangfireServer();
 
-
 builder.Services.AddScoped<ReconciliationService>();
 builder.Services.AddScoped<RecordComparator>();
 builder.Services.AddScoped<IExternalSystemClient, FakeExternalClientSystem>();
@@ -34,10 +33,20 @@ builder.Services.AddScoped<StuckRecoveryJobs>();
 builder.Services.AddControllers();
 
 var app = builder.Build();
+
+// 1. Migrations FIRST
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    db.Database.Migrate();
+}
+
+// 2. Middleware
 app.UseMiddleware<CorrelationIdMiddleware>();
-
 app.UseHangfireDashboard();
+app.UseHttpsRedirection();
 
+// 3. Recurring jobs
 using (var scope = app.Services.CreateScope())
 {
     RecurringJob.AddOrUpdate<RetryJobs>(
@@ -49,18 +58,13 @@ using (var scope = app.Services.CreateScope())
         "periodic-scan",
         job => job.ExecuteAsync(),
         Cron.Minutely);
-RecurringJob.AddOrUpdate<StuckRecoveryJobs>(
-    "stuck-recovery",
-    job => job.ExecuteAsync(),
-    "*/5 * * * *");
-}
-using (var scope = app.Services.CreateScope())
-{
-    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    db.Database.Migrate();
-}
-app.UseHttpsRedirection();
-app.UseMiddleware<CorrelationIdMiddleware>();
 
+    RecurringJob.AddOrUpdate<StuckRecoveryJobs>(
+        "stuck-recovery",
+        job => job.ExecuteAsync(),
+        "*/5 * * * *");
+}
+
+// 4. Controllers
 app.MapControllers();
 app.Run();

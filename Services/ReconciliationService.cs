@@ -19,30 +19,27 @@ public class ReconciliationService
         _logger = logger;
     }
 
-    public async Task ProcessAsync(Guid ReconciliationRecordId){
-
-  var updated = await _db.ReconciliationRecords
-            .Where(r => r.Id == ReconciliationRecordId
+    public async Task ProcessAsync(Guid reconciliationRecordId)
+    {
+        var updated = await _db.ReconciliationRecords
+            .Where(r => r.Id == reconciliationRecordId
                 && (r.Status == ReconciliationStatus.Pending
                 || r.Status == ReconciliationStatus.RetryScheduled))
             .ExecuteUpdateAsync(s => s
                 .SetProperty(r => r.Status, ReconciliationStatus.Processing)
                 .SetProperty(r => r.UpdatedAt, DateTime.UtcNow));
 
-            if(updated == 0) return;
+        if (updated == 0) return;
 
-             var record = await _db.ReconciliationRecords
+        var record = await _db.ReconciliationRecords
             .Include(r => r.InternalRecord)
-            .FirstOrDefaultAsync(r => r.Id == ReconciliationRecordId);
+            .FirstOrDefaultAsync(r => r.Id == reconciliationRecordId);
 
         if (record == null) return;
 
-        _logger.LogInformation(
-            "Processing reconciliation {ReconciliationId} CorrelationId {CorrelationId}",
-            record.Id, record.CorrelationId);
-
-
-                   if (record == null) return;
+_db.ChangeTracker.Clear();
+        if (record.Status != ReconciliationStatus.Processing)
+            record.MarkAsProcessing();
 
         _logger.LogInformation(
             "Processing reconciliation {ReconciliationId} CorrelationId {CorrelationId}",
@@ -50,23 +47,24 @@ public class ReconciliationService
 
         try
         {
-                      var externalRecord = await _externalClient
-                .GetExternalRecordAsync(record.InternalRecord.TransactionId);
+            var externalRecord = await _externalClient
+                .GetExternalRecordAsync(record.InternalRecord!.TransactionId);
 
-
-                  if (externalRecord == null)
+            if (externalRecord == null)
             {
                 HandleRetryOrDeadLetter(record, "External record unavailable");
                 await _db.SaveChangesAsync();
                 return;
             }
-                        var result = _comparator.Compare(record.InternalRecord, externalRecord);
 
-                     if (result.Status == RecordCompare.Match)
+            var result = _comparator.Compare(record.InternalRecord, externalRecord);
+
+            if (result.Status == RecordCompare.Match)
             {
                 record.MarkAsMatched();
                 _logger.LogInformation(
-                    "Matched {TransactionId}", record.InternalRecord.TransactionId);
+                    "Matched {TransactionId}",
+                    record.InternalRecord.TransactionId);
             }
             else if (result.Status == RecordCompare.Mismatch)
             {
@@ -79,15 +77,16 @@ public class ReconciliationService
         catch (Exception ex)
         {
             _logger.LogError(ex,
-                "External system error for {TransactionId}",
-                record.InternalRecord.TransactionId);
+                "External system error for record {ReconciliationId}",
+                record.Id);
 
             HandleRetryOrDeadLetter(record, ex.Message);
         }
 
         await _db.SaveChangesAsync();
     }
-        private void HandleRetryOrDeadLetter(ReconciliationRecord record, string reason)
+
+    private void HandleRetryOrDeadLetter(ReconciliationRecord record, string reason)
     {
         if (record.RetryCount >= record.MaxRetryCount)
         {
@@ -105,6 +104,3 @@ public class ReconciliationService
         }
     }
 }
-
-
-
