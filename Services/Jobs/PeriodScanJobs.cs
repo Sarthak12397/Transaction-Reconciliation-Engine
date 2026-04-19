@@ -14,8 +14,7 @@ public class PeriodScanJobs
     public async Task ExecuteAsync()
     {
            var records = await _db.ReconciliationRecords
-        .Where(r => r.Status == ReconciliationStatus.Pending
-            && r.NextRetryAt <= DateTime.UtcNow )
+        .Where(r => r.Status == ReconciliationStatus.Pending)
         .ToListAsync();
 
     foreach(var record in records)

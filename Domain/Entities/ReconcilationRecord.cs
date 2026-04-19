@@ -6,13 +6,13 @@ public class ReconciliationRecord
     }
 public Guid InternalRecordId { get; private set; }
 
-    public InternalRecord InternalRecord
+    public InternalRecord? InternalRecord
     {
         get; private set;
     }
 public Guid ExternalRecordId { get; private set; }
 
-    public ExternalRecord ExternalRecord
+    public ExternalRecord? ExternalRecord
     {
         get; private set;
     }

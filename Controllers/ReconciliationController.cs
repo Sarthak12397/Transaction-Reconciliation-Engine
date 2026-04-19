@@ -21,11 +21,11 @@ public class ReconciliationController: ControllerBase
 
         if(existing == null) 
 
-         throw new KeyNotFoundException($" {id} not found");
+return NotFound($"{id} not found");
 
         if (existing.Status != ReconciliationStatus.DeadLettered)
         
-             BadRequest("Not working");
+return BadRequest("Record is not DeadLettered");
 
              existing.MarkAsPending();
 await _db.SaveChangesAsync();
