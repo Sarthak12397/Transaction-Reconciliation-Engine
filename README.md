@@ -49,6 +49,10 @@ Without active reconciliation, these gaps silently accumulate.
 ## Reconciliation Lifecycle
 <img width="2027" height="940" alt="mermaid-diagram (4)" src="https://github.com/user-attachments/assets/9eee5378-4191-4af9-acff-13f0f734adcf" />
 
+## Architecture Diagram
+<img width="2119" height="2418" alt="mermaid" src="https://github.com/user-attachments/assets/8c91e41d-3b54-4ba7-bb15-eecd1f00b4e4" />
+
+
 ## Example Flow
 
 ### 1. Seed test data
