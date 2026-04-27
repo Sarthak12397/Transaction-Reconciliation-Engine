@@ -149,6 +149,10 @@ Hangfire Dashboard: `http://localhost:5278/hangfire`
 
 ## API Endpoints
 
+> This system is primarily event-driven via Hangfire.
+> The API surface is intentionally minimal — operations 
+> are triggered by background jobs, not HTTP calls.
+
 | Method | Route | Description |
 |--------|-------|-------------|
 | POST | `/api/reconciliation/seed` | Create test record |
