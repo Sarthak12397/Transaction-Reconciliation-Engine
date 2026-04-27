@@ -1,0 +1,81 @@
+{
+  "info": {
+    "_postman_id": "612fb096-ff1b-4ad3-89d9-ac08fe876530",
+    "name": "Transaction_Reconciliation_Engine",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "20620578"
+  },
+  "item": [
+    {
+      "name": " http://localhost:5278/api/reconciliation/list/dead-lettered",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:5278/api/reconciliation/list/dead-lettered",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "5278",
+          "path": [
+            "api",
+            "reconciliation",
+            "list",
+            "dead-lettered"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "http://localhost:5278/api/reconciliation/seed",
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "POST",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:5278/api/reconciliation/seed",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "5278",
+          "path": [
+            "api",
+            "reconciliation",
+            "seed"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "http://localhost:5278/api/reconciliation/cbf1a799-6221-4b92-af17-4abb5cfdbd29/requeue",
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "POST",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:5278/api/reconciliation/1f7d7bd5-81c4-4f10-9bc3-5376b48c9173/requeue",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "5278",
+          "path": [
+            "api",
+            "reconciliation",
+            "1f7d7bd5-81c4-4f10-9bc3-5376b48c9173",
+            "requeue"
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}
