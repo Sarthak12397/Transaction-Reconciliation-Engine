@@ -6,6 +6,11 @@ retries, failure classification, and dead-letter handling.
 
 > Built with .NET 10 · PostgreSQL · Hangfire · Docker · Serilog
 
+> Part of a two-system fintech backend portfolio.  
+> See also: [Payment Processing System](https://github.com/Sarthak12397/TransactionalBusinessAPI) 
+> — the write-side that generates the transactions this engine reconciles.
+
+
 ## System Summary
 
 This system continuously reconciles internal financial 
