@@ -1,8 +1,9 @@
 # Data Reconciliation / Consistency Monitor
 
-A backend system that detects when two financial systems 
-disagree — and resolves the gap automatically through 
-retries, failure classification, and dead-letter handling.
+A reconciliation system that detects and resolves financial 
+inconsistencies between internal records and external payment 
+providers — preventing silent monetary drift and ensuring 
+eventual consistency across systems.
 
 > Built with .NET 10 · PostgreSQL · Hangfire · Docker · Serilog
 
@@ -22,6 +23,13 @@ It ensures eventual consistency through:
 - Idempotent external interactions
 - Retry + dead-letter failure handling
 - Full audit trail of every state change
+
+## Core Guarantees
+
+- No reconciliation record is processed twice — idempotent execution enforced at DB level
+- External systems are never triggered multiple times for the same transaction
+- All mismatches are traceable and recoverable via audit trail
+- No silent failures — every record reaches a resolvable terminal state
 
 ## Problem
 
@@ -174,7 +182,7 @@ Hangfire Dashboard: `http://localhost:5278/hangfire`
 
 
 
-## What I'd Improve
+## Scaling & Production Hardening
 
 | Improvement | Reason | Priority |
 |-------------|--------|----------|
